@@ -1,0 +1,135 @@
+SGC:
+  name: "SGCwoPE"
+  network: SGCwoPE
+  data_manager_module: ISADataManager_withSolv
+  data_manager_class: ISADataManager_withSolv
+  network_manager_module: ISANetworkManager
+  network_manager_class: ISANetworkManager
+  train_manager_module: ISATrainManager
+  train_manager_class: ISATrainer
+  description: ""
+  version: "1.0"
+
+SGCwoPE_GCN:
+  name: "SGCwoPE_GCN"
+  network: SGCwoPE_GCN
+  data_manager_module: ISADataManager_withSolv
+  data_manager_class: ISADataManager_withSolv
+  network_manager_module: ISANetworkManager
+  network_manager_class: ISANetworkManager
+  train_manager_module: ISATrainManager
+  train_manager_class: ISATrainer
+  description: ""
+  version: "1.0"
+
+SGCwoPE_AFP:
+  name: "SGCwoPE_AFP"
+  network: SGCwoPE_AFP
+  data_manager_module: ISADataManager_withSolv
+  data_manager_class: ISADataManager_withSolv
+  network_manager_module: ISANetworkManager
+  network_manager_class: ISANetworkManager
+  train_manager_module: ISATrainManager
+  train_manager_class: ISATrainer
+  description: ""
+  version: "1.0"
+
+SGCwoPE_DMPNN:
+  name: "SGCwoPE_DMPNN"
+  network: SGCwoPE_DMPNN
+  data_manager_module: ISADataManager_withSolv
+  data_manager_class: ISADataManager_withSolv
+  network_manager_module: ISANetworkManager
+  network_manager_class: ISANetworkManager
+  train_manager_module: ISATrainManager
+  train_manager_class: ISATrainer
+  description: ""
+  version: "1.0"
+
+SGCwoPE_MPNN:
+  name: "SGCwoPE_MPNN"
+  network: SGCwoPE_MPNN
+  data_manager_module: ISADataManager_withSolv
+  data_manager_class: ISADataManager_withSolv
+  network_manager_module: ISANetworkManager
+  network_manager_class: ISANetworkManager
+  train_manager_module: ISATrainManager
+  train_manager_class: ISATrainer
+  description: ""
+  version: "1.0"
+
+SGCwoPE-2:
+  name: "SGCwoPE-2"
+  network: SGCwoPE-2
+  data_manager_module: ISADataManager_withSolv
+  data_manager_class: ISADataManager_withSolv
+  network_manager_module: ISANetworkManager
+  network_manager_class: ISANetworkManager
+  train_manager_module: ISATrainManager
+  train_manager_class: ISATrainer
+  description: ""
+  version: "1.0"
+
+
+
+
+SGC:
+  name: "SGC"
+  network: SGC
+  data_manager_module: ISADataManager_withSolv
+  data_manager_class: ISADataManager_withSolv
+  network_manager_module: ISANetworkManager
+  network_manager_class: ISANetworkManager
+  train_manager_module: ISATrainManager
+  train_manager_class: ISATrainer
+  description: ""
+  version: "1.0"
+
+SGC_GCN:
+  name: "SGC_GCN"
+  network: SGC_GCN
+  data_manager_module: ISADataManager_withSolv
+  data_manager_class: ISADataManager_withSolv
+  network_manager_module: ISANetworkManager
+  network_manager_class: ISANetworkManager
+  train_manager_module: ISATrainManager
+  train_manager_class: ISATrainer
+  description: ""
+  version: "1.0"
+
+SGC_AFP:
+  name: "SGC_AFP"
+  network: SGC_AFP
+  data_manager_module: ISADataManager_withSolv
+  data_manager_class: ISADataManager_withSolv
+  network_manager_module: ISANetworkManager
+  network_manager_class: ISANetworkManager
+  train_manager_module: ISATrainManager
+  train_manager_class: ISATrainer
+  description: ""
+  version: "1.0"
+
+SGC_DMPNN:
+  name: "SGC_DMPNN"
+  network: SGC_DMPNN
+  data_manager_module: ISADataManager_withSolv
+  data_manager_class: ISADataManager_withSolv
+  network_manager_module: ISANetworkManager
+  network_manager_class: ISANetworkManager
+  train_manager_module: ISATrainManager
+  train_manager_class: ISATrainer
+  description: ""
+  version: "1.0"
+
+SGC_MPNN:
+  name: "SGC_MPNN"
+  network: SGC_MPNN
+  data_manager_module: ISADataManager_withSolv
+  data_manager_class: ISADataManager_withSolv
+  network_manager_module: ISANetworkManager
+  network_manager_class: ISANetworkManager
+  train_manager_module: ISATrainManager
+  train_manager_class: ISATrainer
+  description: ""
+  version: "1.0"
+
