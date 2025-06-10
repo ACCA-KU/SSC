@@ -2,10 +2,10 @@ import torch
 import torch.nn as nn
 
 import dgl
-from dgl.nn import SumPooling, AvgPooling
+from dgl.nn import SumPooling
 from D4CMPP.networks.src.Linear import Linears
 from D4CMPP.networks.src.GAT import GATs, GAT_layer
-from D4CMPP.networks.src.MPNN import MPNN_layer
+from D4CMPP.networks.src.GCN import GCNs, GCN_layer
 from D4CMPP.networks.src.distGCN import distGCN_layer
 
 class network(nn.Module):
@@ -67,8 +67,6 @@ class network(nn.Module):
             nn.Sigmoid(),
         )
 
-
-
         
 
     
@@ -118,7 +116,7 @@ class network(nn.Module):
 
 
         if kargs.get('get_score',False):
-            return {'vp':refer_p, 'se1':se1, 'se2': se2}
+            return {'RP':refer_p, 'SGC':se1, 'PE': se2}
         p = refer_p + sum_se
         return p
         
@@ -130,8 +128,8 @@ class ISATconvolution(nn.Module):
     def __init__(self, in_node_feats, in_edge_feats, out_feats, activation, n_layers, dropout=0.2, batch_norm=False, residual_sum = False, alpha=0.1, max_dist = 4):
         super().__init__()        
         # Message Passing
-        self.r2r = nn.ModuleList([GAT_layer(in_node_feats, out_feats, out_feats, activation, dropout, batch_norm, residual_sum) for _ in range(n_layers)])
-        self.i2i = nn.ModuleList([GAT_layer(out_feats, out_feats, out_feats, activation, dropout, batch_norm, residual_sum) for _ in range(n_layers)])
+        self.r2r = nn.ModuleList([GCN_layer(in_node_feats, out_feats, activation, dropout, batch_norm, residual_sum) for _ in range(n_layers)])
+        self.i2i = nn.ModuleList([GCN_layer(out_feats, out_feats, activation, dropout, batch_norm, residual_sum) for _ in range(n_layers)])
 
         self.r2i = r2i_layer()
         self.i2d = i2s_layer()

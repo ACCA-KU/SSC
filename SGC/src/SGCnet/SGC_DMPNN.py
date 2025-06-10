@@ -98,22 +98,26 @@ class network(nn.Module):
         solv_h = self.GATs_solv(solv_r_graph, solv_node_feats)
         solv_h = self.reduce(solv_r_graph, solv_h)
         expanded_indices = torch.repeat_interleave( torch.arange(solv_h.shape[0]).to(device=solv_h.device), dot_graph.batch_num_nodes().int() )
-        solv_h = solv_h[expanded_indices]
-
-        v1 = torch.cat([d_node1, solv_h], dim=-1)
-        se1 = self.SElayer1(v1)
-        sum_se1 = self.reduce(dot_graph, se1)
-
-        # v2 = torch.cat([d_node2, solv_h], dim=-1)
-        # se2 = self.SElayer2(v2)
-        # sum_se2 = self.reduce(dot_graph, se2)
+        solv_h_expanded = solv_h[expanded_indices]
 
         h = self.reduce(real_graph, r_node3)
+        h_expanded = torch.repeat_interleave(h, dot_graph.batch_num_nodes().int(), dim=0)
+
         refer_p = self.referLayer(h)
 
+        v1 = torch.cat([d_node1, solv_h_expanded], dim=-1)
+        se1 = self.SElayer1(v1)
+
+        v2 = torch.cat([d_node2, h_expanded, solv_h_expanded], dim=-1)
+        se2 = self.SElayer2_(v2)*2
+        
+        se = se2*se1
+        sum_se = self.reduce(dot_graph, se)
+
+
         if kargs.get('get_score',False):
-            return {'vp':refer_p, 'se1':se1, 'se2':torch.tensor([])}
-        p = refer_p + sum_se1 #+ sum_se2
+            return {'RP':refer_p, 'SGC':se1, 'PE': se2}
+        p = refer_p + sum_se
         return p
         
     def loss_fn(self, scores, targets):

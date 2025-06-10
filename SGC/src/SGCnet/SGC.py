@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 
 import dgl
-from dgl.nn import SumPooling
+from dgl.nn import SumPooling, AvgPooling
 from D4CMPP.networks.src.Linear import Linears
 from D4CMPP.networks.src.GAT import GATs, GAT_layer
 from D4CMPP.networks.src.MPNN import MPNN_layer
@@ -67,6 +67,8 @@ class network(nn.Module):
             nn.Sigmoid(),
         )
 
+
+
         
 
     
@@ -98,22 +100,26 @@ class network(nn.Module):
         solv_h = self.GATs_solv(solv_r_graph, solv_node_feats)
         solv_h = self.reduce(solv_r_graph, solv_h)
         expanded_indices = torch.repeat_interleave( torch.arange(solv_h.shape[0]).to(device=solv_h.device), dot_graph.batch_num_nodes().int() )
-        solv_h = solv_h[expanded_indices]
-
-        v1 = torch.cat([d_node1, solv_h], dim=-1)
-        se1 = self.SElayer1(v1)
-        sum_se1 = self.reduce(dot_graph, se1)
-
-        # v2 = torch.cat([d_node2, solv_h], dim=-1)
-        # se2 = self.SElayer2(v2)
-        # sum_se2 = self.reduce(dot_graph, se2)
+        solv_h_expanded = solv_h[expanded_indices]
 
         h = self.reduce(real_graph, r_node3)
+        h_expanded = torch.repeat_interleave(h, dot_graph.batch_num_nodes().int(), dim=0)
+
         refer_p = self.referLayer(h)
 
+        v1 = torch.cat([d_node1, solv_h_expanded], dim=-1)
+        se1 = self.SElayer1(v1)
+
+        v2 = torch.cat([d_node2, h_expanded, solv_h_expanded], dim=-1)
+        se2 = self.SElayer2_(v2)*2
+        
+        se = se2*se1
+        sum_se = self.reduce(dot_graph, se)
+
+
         if kargs.get('get_score',False):
-            return {'vp':refer_p, 'se1':se1, 'se2':torch.tensor([])}
-        p = refer_p + sum_se1 #+ sum_se2
+            return {'RP':refer_p, 'SGC':se1, 'PE': se2}
+        p = refer_p + sum_se
         return p
         
     def loss_fn(self, scores, targets):
@@ -124,7 +130,7 @@ class ISATconvolution(nn.Module):
     def __init__(self, in_node_feats, in_edge_feats, out_feats, activation, n_layers, dropout=0.2, batch_norm=False, residual_sum = False, alpha=0.1, max_dist = 4):
         super().__init__()        
         # Message Passing
-        self.r2r = nn.ModuleList([MPNN_layer(in_node_feats, in_edge_feats, out_feats, activation, dropout, batch_norm, residual_sum) for _ in range(n_layers)])
+        self.r2r = nn.ModuleList([GAT_layer(in_node_feats, out_feats, out_feats, activation, dropout, batch_norm, residual_sum) for _ in range(n_layers)])
         self.i2i = nn.ModuleList([GAT_layer(out_feats, out_feats, out_feats, activation, dropout, batch_norm, residual_sum) for _ in range(n_layers)])
 
         self.r2i = r2i_layer()
@@ -147,7 +153,7 @@ class ISATconvolution(nn.Module):
         dot_graph.set_batch_num_edges(graph.batch_num_edges('d2d'))
 
         for i in range(len(self.r2r)):
-            r_node = self.r2r[i](real_graph, r_node, r2r_edge)
+            r_node = self.r2r[i](real_graph, r_node)
             i_node = self.i2i[i](image_graph, i_node)
         d_node1 = self.i2d(graph, i_node)
         d_node2 = self.d2d(dot_graph, d_node1, d2d_edge)

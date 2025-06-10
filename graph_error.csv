@@ -1,0 +1,3 @@
+smiles,type,reason
+gas,solvent,Invalid SMILES: failed to generate mol object
+gas,solvent,Invalid SMILES: failed to generate mol object

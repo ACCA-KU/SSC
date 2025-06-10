@@ -23,27 +23,24 @@ class SGCAnalyzer(ISAAnalyzer):
 
 
     # get the attention score of the given smiles
-    def get_score(self, smiles, solvent, inverse_transform=False, key = 'se1'):
+    def get_score(self, smiles, solvent, inverse_transform=True):
         "get the attention score of the given smiles by its subgroups"
-        if False:
-            pass
-        else:            
-            test_loader,_ = self.prepare_temp_data([smiles],[solvent])
-            result = self.tm.get_score(self.nm, test_loader)
-            for k in result.keys():
-                if type(result[k]) is torch.Tensor:
-                    result[k] = result[k].detach().cpu().numpy()
+        test_loader,_ = self.prepare_temp_data([smiles],[solvent])
+        result = self.tm.get_score(self.nm, test_loader)
+        for k in result.keys():
+            if type(result[k]) is torch.Tensor:
+                result[k] = result[k].detach().cpu().numpy()
 
-            result[key] = self.get_group_score(smiles, result[key])
-            result['vp'] =  result['vp']
-            
-            self.save_data(smiles, result)
-            if inverse_transform:
-                result= self.inverse_transform(result)
-            return result
+        # result[key] = self.get_group_score(smiles, result[key])
+        # result['vp'] =  result['vp']
+        
+        self.save_data(smiles, result)
+        if inverse_transform:
+            result= self.inverse_transform(result)
+        return result
 
 
-    def plot_score(self, smiles, solvent ,key, inverse_transform=False, **kwargs):
+    def plot_score(self, smiles, solvent ,key, inverse_transform=True, **kwargs):
         """
         This function plots the attention score of the given smiles by its subgroups.
 
