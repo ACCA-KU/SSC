@@ -133,3 +133,14 @@ SGC_MPNN:
   description: ""
   version: "1.0"
 
+SGC_multi:
+  name: "SGC_multi"
+  network: SGC_multi
+  data_manager_module: ISADataManager
+  data_manager_class: ISADataManager_v1p3
+  network_manager_module: ISANetworkManager
+  network_manager_class: ISANetworkManager
+  train_manager_module: ISATrainManager
+  train_manager_class: ISATrainer
+  description: ""
+  version: "1.3"

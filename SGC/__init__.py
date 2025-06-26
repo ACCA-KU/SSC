@@ -5,7 +5,7 @@ import sys
 import inspect
 
 from .src.SGCAnalyzer import SGCAnalyzer as Analyzer
-
+import yaml
 def train(**kwargs):
     """
     Train the network for SGC with the given configuration.
@@ -95,9 +95,10 @@ def train(**kwargs):
 
     
     """
-        
-    if kwargs.get('network','SGC') not in ['SGC', 'SGC_GCN', 'SGC_MPNN', 'SGC_DMPNN', 'SGC_AFP', 'SGCwoPE', 'SGCwoPE_GCN', 'SGCwoPE_MPNN', 'SGCwoPE_DMPNN', 'SGCwoPE_AFP']:
-        raise ValueError("network must be one of ['SGC', 'SGC_GCN', 'SGC_MPNN', 'SGC_DMPNN', 'SGC_AFP', 'SGCwoPE', 'SGCwoPE_GCN', 'SGCwoPE_MPNN', 'SGCwoPE_DMPNN', 'SGCwoPE_AFP']")
+    # Check if the required arguments are provided
+    valid_networks = yaml.safe_load(open(os.path.join(os.path.dirname(__file__), "src/network_refer.yaml"), 'r')).keys()
+    if kwargs.get('network','SGC') not in valid_networks:
+        raise ValueError(f"network must be one of {valid_networks}")
     if kwargs.get('network',None) is None:
         kwargs['network'] = 'SGC'
     pwd  = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))

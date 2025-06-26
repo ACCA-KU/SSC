@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="SGC",
-    version="1.0.0",
+    version="1.1.0",
     author="Jinyong Park",
     author_email="phillip1998@korea.ac.kr",
     description="Graph neural network model for prediction of experimental molecular property reflecting Solvatochromic group contribution approach",
@@ -14,7 +14,7 @@ setup(
     install_requires=[
 "numpy>=1.23",
 "pandas>=2.0",
-"scikit-learn>=1.3,<1.5",
+"scikit-learn>=1.3",
 "scipy>=1.10",
 "matplotlib>=3.7",
 "seaborn>=0.12",
