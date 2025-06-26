@@ -5,6 +5,7 @@ _Graphs/
 */.ipynb_checkpoints/*
 *.py[cod]
 *$py.class
+Untitled*
 
 # C extensions
 *.so
