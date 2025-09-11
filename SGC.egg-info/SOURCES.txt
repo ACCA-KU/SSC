@@ -1,8 +1,0 @@
-README.md
-setup.py
-SGC/__init__.py
-SGC.egg-info/PKG-INFO
-SGC.egg-info/SOURCES.txt
-SGC.egg-info/dependency_links.txt
-SGC.egg-info/requires.txt
-SGC.egg-info/top_level.txt

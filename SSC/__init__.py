@@ -4,11 +4,11 @@ import os
 import sys
 import inspect
 
-from .src.SGCAnalyzer import SGCAnalyzer as Analyzer
+from .src.SSCAnalyzer import SSCAnalyzer as Analyzer
 import yaml
 def train(**kwargs):
     """
-    Train the network for SGC with the given configuration.
+    Train the network for SSC with the given configuration.
 
     Args for the training:
         (Required args for the scratch training)
@@ -16,9 +16,9 @@ def train(**kwargs):
                       the name or path of the data file as a csv file. you can omit the ".csv" extension.
         target      : list[str]
                       the name of the target column.
-        network     : str. default= "SGC"
+        network     : str. default= "SSC"
                       the name of the network to use. 
-                      ['SGC', 'SGC_GCN', 'SGC_MPNN', 'SGC_DMPNN', 'SGC_AFP', 'SGCwoPE', 'SGCwoPE_GCN', 'SGCwoPE_MPNN', 'SGCwoPE_DMPNN', 'SGCwoPE_AFP']
+                      ['SSC', 'SSC_GCN', 'SSC_MPNN', 'SSC_DMPNN', 'SSC_AFP', 'SSCwoPE', 'SSCwoPE_GCN', 'SSCwoPE_MPNN', 'SSCwoPE_DMPNN', 'SSCwoPE_AFP']
     
         (Network hyperparameters. The following args will be varied according to the network chosen.)
         hidden_dim      : int. Default= 64
@@ -97,14 +97,14 @@ def train(**kwargs):
     """
     # Check if the required arguments are provided
     valid_networks = yaml.safe_load(open(os.path.join(os.path.dirname(__file__), "src/network_refer.yaml"), 'r')).keys()
-    if kwargs.get('network','SGC') not in valid_networks:
+    if kwargs.get('network','SSC') not in valid_networks:
         raise ValueError(f"network must be one of {valid_networks}")
     if kwargs.get('network',None) is None:
-        kwargs['network'] = 'SGC'
+        kwargs['network'] = 'SSC'
     pwd  = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
     kwargs['NET_REFER'] = os.path.join(pwd, "src/network_refer.yaml")
-    kwargs['NET_DIR'] = os.path.join(pwd, "src/SGCnet")
-    kwargs['DataManager_PATH'] = os.path.join(pwd, "src/SGCDataManager")
+    kwargs['NET_DIR'] = os.path.join(pwd, "src/SSCnet")
+    kwargs['DataManager_PATH'] = os.path.join(pwd, "src/SSCDataManager")
     kwargs['explicit_h_columns'] = ['solvent']
     kwargs['sculptor_index'] = (6,2,0)
 

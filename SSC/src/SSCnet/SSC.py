@@ -72,29 +72,7 @@ class network(nn.Module):
         
 
     
-    def forward(self, **kargs):
-        graph =  kargs['Smiles_graphs']
-        r_node = kargs['Smiles_r_node']
-        i_node = kargs['Smiles_i_node']
-        r_edge = kargs['Smiles_r2r_edge']
-        d_edge = kargs['Smiles_d2d_edge']
-
-        graph_elu1 =  kargs['elu1_smiles_graphs']
-        r_node_elu1 = kargs['elu1_smiles_r_node']
-        i_node_elu1 = kargs['elu1_smiles_i_node']
-        r_edge_elu1 = kargs['elu1_smiles_r2r_edge']
-        d_edge_elu1 = kargs['elu1_smiles_d2d_edge']
-
-        graph_elu2 =  kargs['elu2_smiles_graphs']
-        r_node_elu2 = kargs['elu2_smiles_r_node']
-        i_node_elu2 = kargs['elu2_smiles_i_node']
-        r_edge_elu2 = kargs['elu2_smiles_r2r_edge']
-        d_edge_elu2 = kargs['elu2_smiles_d2d_edge']
-
-        ratio1 = kargs.get('ratio1_var', 0.5)
-        ratio2 = kargs.get('ratio2_var', 0.5)
-
-        # solute convolution
+    def forward(self, graph, r_node, i_node, r_edge, d_edge, solv_graph, solv_node_feats, solv_edge_feats, **kargs):
         r_node = r_node.float()
         r_node2 = self.embedding_rnode_lin(r_node)
 
@@ -110,53 +88,37 @@ class network(nn.Module):
         dot_graph.set_batch_num_nodes(graph.batch_num_nodes('d_nd'))
         dot_graph.set_batch_num_edges(graph.batch_num_edges('d2d'))
 
+        solv_node_feats = solv_node_feats.float()
+        solv_node_feats = self.embedding_solv_lin(solv_node_feats)
+
+        solv_r_graph = solv_graph.node_type_subgraph(['r_nd'])
+        solv_r_graph.set_batch_num_nodes(solv_graph.batch_num_nodes('r_nd'))
+        solv_r_graph.set_batch_num_edges(solv_graph.batch_num_edges('r2r'))
+        
         r_node3, d_node1, d_node2 = self.ISATconv(graph, r_node2, r_edge, i_node, d_edge)
+
+        solv_h = self.GATs_solv(solv_r_graph, solv_node_feats)
+        solv_h = self.reduce(solv_r_graph, solv_h)
+        expanded_indices = torch.repeat_interleave( torch.arange(solv_h.shape[0]).to(device=solv_h.device), dot_graph.batch_num_nodes().int() )
+        solv_h_expanded = solv_h[expanded_indices]
+
         h = self.reduce(real_graph, r_node3)
         h_expanded = torch.repeat_interleave(h, dot_graph.batch_num_nodes().int(), dim=0)
 
-        refer_p = self.referLayer(h) # Reference Property
+        refer_p = self.referLayer(h)
 
+        v1 = torch.cat([d_node1, solv_h_expanded], dim=-1)
+        se1 = self.SElayer1(v1)
 
-        # eluent1 convolution
-        elu1_graph = graph_elu1.node_type_subgraph(['r_nd'])
-        elu1_graph.set_batch_num_nodes(graph_elu1.batch_num_nodes('r_nd'))
-        elu1_graph.set_batch_num_edges(graph_elu1.batch_num_edges('r2r'))
-
-        elu1_node_feats = r_node_elu1.float()
-        elu1_node_feats = self.embedding_solv_lin(elu1_node_feats)
-
-        solv_h1 = self.GATs_solv(elu1_graph, elu1_node_feats)
-        solv_h1 = self.reduce(elu1_graph, solv_h1)
-
-        # eluent2 convolution
-        elu2_graph = graph_elu2.node_type_subgraph(['r_nd'])
-        elu2_graph.set_batch_num_nodes(graph_elu2.batch_num_nodes('r_nd'))
-        elu2_graph.set_batch_num_edges(graph_elu2.batch_num_edges('r2r'))
-
-        elu2_node_feats = r_node_elu2.float()
-        elu2_node_feats = self.embedding_solv_lin(elu2_node_feats)
-        
-        solv_h2 = self.GATs_solv(elu1_graph, elu1_node_feats)
-        solv_h2 = self.reduce(elu1_graph, solv_h2)
-
-        # Weight sum of the eluent contributions
-        solv_h_sum = solv_h1*ratio1 + solv_h2*ratio2
-        expanded_indices = torch.repeat_interleave( torch.arange(solv_h_sum.shape[0]).to(device=solv_h_sum.device), dot_graph.batch_num_nodes().int() )
-        solv_h_sum_expanded = solv_h_sum[expanded_indices]
-
-
-        v1 = torch.cat([d_node1, solv_h_sum_expanded], dim=-1)
-        se1 = self.SElayer1(v1) # Solvent group contribution
-
-        v2 = torch.cat([d_node2, h_expanded, solv_h_sum_expanded], dim=-1)
-        se2 = self.SElayer2_(v2)*2 # Proximity effect
+        v2 = torch.cat([d_node2, h_expanded, solv_h_expanded], dim=-1)
+        se2 = self.SElayer2_(v2)*2
         
         se = se2*se1
         sum_se = self.reduce(dot_graph, se)
 
 
         if kargs.get('get_score',False):
-            return {'RP':refer_p, 'SGC':se1, 'PE': se2}
+            return {'RP':refer_p, 'SC':se1, 'PEF': se2}
         p = refer_p + sum_se
         return p
         

@@ -1,6 +1,6 @@
-SGC:
-  name: "SGCwoPE"
-  network: SGCwoPE
+SSCwoPE_GCN:
+  name: "SSCwoPE_GCN"
+  network: SSCwoPE_GCN
   data_manager_module: ISADataManager_withSolv
   data_manager_class: ISADataManager_withSolv
   network_manager_module: ISANetworkManager
@@ -10,9 +10,9 @@ SGC:
   description: ""
   version: "1.0"
 
-SGCwoPE_GCN:
-  name: "SGCwoPE_GCN"
-  network: SGCwoPE_GCN
+SSCwoPE_AFP:
+  name: "SSCwoPE_AFP"
+  network: SSCwoPE_AFP
   data_manager_module: ISADataManager_withSolv
   data_manager_class: ISADataManager_withSolv
   network_manager_module: ISANetworkManager
@@ -22,9 +22,9 @@ SGCwoPE_GCN:
   description: ""
   version: "1.0"
 
-SGCwoPE_AFP:
-  name: "SGCwoPE_AFP"
-  network: SGCwoPE_AFP
+SSCwoPE_DMPNN:
+  name: "SSCwoPE_DMPNN"
+  network: SSCwoPE_DMPNN
   data_manager_module: ISADataManager_withSolv
   data_manager_class: ISADataManager_withSolv
   network_manager_module: ISANetworkManager
@@ -34,9 +34,9 @@ SGCwoPE_AFP:
   description: ""
   version: "1.0"
 
-SGCwoPE_DMPNN:
-  name: "SGCwoPE_DMPNN"
-  network: SGCwoPE_DMPNN
+SSCwoPE_MPNN:
+  name: "SSCwoPE_MPNN"
+  network: SSCwoPE_MPNN
   data_manager_module: ISADataManager_withSolv
   data_manager_class: ISADataManager_withSolv
   network_manager_module: ISANetworkManager
@@ -46,21 +46,9 @@ SGCwoPE_DMPNN:
   description: ""
   version: "1.0"
 
-SGCwoPE_MPNN:
-  name: "SGCwoPE_MPNN"
-  network: SGCwoPE_MPNN
-  data_manager_module: ISADataManager_withSolv
-  data_manager_class: ISADataManager_withSolv
-  network_manager_module: ISANetworkManager
-  network_manager_class: ISANetworkManager
-  train_manager_module: ISATrainManager
-  train_manager_class: ISATrainer
-  description: ""
-  version: "1.0"
-
-SGCwoPE-2:
-  name: "SGCwoPE-2"
-  network: SGCwoPE-2
+SSCwoPE-2:
+  name: "SSCwoPE-2"
+  network: SSCwoPE-2
   data_manager_module: ISADataManager_withSolv
   data_manager_class: ISADataManager_withSolv
   network_manager_module: ISANetworkManager
@@ -71,11 +59,20 @@ SGCwoPE-2:
   version: "1.0"
 
 
+SSConlyPE:
+  name: "SSConlyPE"
+  network: SSConlyPE
+  data_manager_module: ISADataManager_withSolv
+  data_manager_class: ISADataManager_withSolv
+  network_manager_module: ISANetworkManager
+  network_manager_class: ISANetworkManager
+  train_manager_module: ISATrainManager
+  train_manager_class: ISATrainer
+  description: ""
 
-
-SGC:
-  name: "SGC"
-  network: SGC
+SSC:
+  name: "SSC"
+  network: SSC
   data_manager_module: ISADataManager_withSolv
   data_manager_class: ISADataManager_withSolv
   network_manager_module: ISANetworkManager
@@ -85,9 +82,9 @@ SGC:
   description: ""
   version: "1.0"
 
-SGC_GCN:
-  name: "SGC_GCN"
-  network: SGC_GCN
+SSC_GCN:
+  name: "SSC_GCN"
+  network: SSC_GCN
   data_manager_module: ISADataManager_withSolv
   data_manager_class: ISADataManager_withSolv
   network_manager_module: ISANetworkManager
@@ -97,9 +94,9 @@ SGC_GCN:
   description: ""
   version: "1.0"
 
-SGC_AFP:
-  name: "SGC_AFP"
-  network: SGC_AFP
+SSC_AFP:
+  name: "SSC_AFP"
+  network: SSC_AFP
   data_manager_module: ISADataManager_withSolv
   data_manager_class: ISADataManager_withSolv
   network_manager_module: ISANetworkManager
@@ -109,9 +106,9 @@ SGC_AFP:
   description: ""
   version: "1.0"
 
-SGC_DMPNN:
-  name: "SGC_DMPNN"
-  network: SGC_DMPNN
+SSC_DMPNN:
+  name: "SSC_DMPNN"
+  network: SSC_DMPNN
   data_manager_module: ISADataManager_withSolv
   data_manager_class: ISADataManager_withSolv
   network_manager_module: ISANetworkManager
@@ -121,9 +118,9 @@ SGC_DMPNN:
   description: ""
   version: "1.0"
 
-SGC_MPNN:
-  name: "SGC_MPNN"
-  network: SGC_MPNN
+SSC_MPNN:
+  name: "SSC_MPNN"
+  network: SSC_MPNN
   data_manager_module: ISADataManager_withSolv
   data_manager_class: ISADataManager_withSolv
   network_manager_module: ISANetworkManager
@@ -133,9 +130,9 @@ SGC_MPNN:
   description: ""
   version: "1.0"
 
-SGC_multi:
-  name: "SGC_multi"
-  network: SGC_multi
+SSC_multi:
+  name: "SSC_multi"
+  network: SSC_multi
   data_manager_module: ISADataManager
   data_manager_class: ISADataManager_v1p3
   network_manager_module: ISANetworkManager

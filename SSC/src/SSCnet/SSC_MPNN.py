@@ -5,8 +5,7 @@ import dgl
 from dgl.nn import SumPooling
 from D4CMPP.networks.src.Linear import Linears
 from D4CMPP.networks.src.GAT import GATs, GAT_layer
-from D4CMPP.networks.src.GCN import GCNs, GCN_layer
-from D4CMPP.networks.src.AFP import  AttentiveFP
+from D4CMPP.networks.src.MPNN import MPNN_layer
 from D4CMPP.networks.src.distGCN import distGCN_layer
 
 class network(nn.Module):
@@ -21,7 +20,6 @@ class network(nn.Module):
         solvent_dim = config.get('solvent_dim', 64)
         solv_gcn_layers = config.get('solvent_conv_layers', 4)
 
-
         self.embedding_rnode_lin = nn.Sequential(
             nn.Linear(config['node_dim'], hidden_dim, bias=False)
         )
@@ -31,6 +29,7 @@ class network(nn.Module):
         self.embedding_edge_lin = nn.Sequential(
             nn.Linear(config['edge_dim'], hidden_dim, bias=False)
         )
+
         self.embedding_solv_lin = nn.Sequential(
             nn.Linear(config['node_dim'], solvent_dim, bias=False)
         )
@@ -117,7 +116,7 @@ class network(nn.Module):
 
 
         if kargs.get('get_score',False):
-            return {'RP':refer_p, 'SGC':se1, 'PE': se2}
+            return {'RP':refer_p, 'SC':se1, 'PEF': se2}
         p = refer_p + sum_se
         return p
         
@@ -129,19 +128,8 @@ class ISATconvolution(nn.Module):
     def __init__(self, in_node_feats, in_edge_feats, out_feats, activation, n_layers, dropout=0.2, batch_norm=False, residual_sum = False, alpha=0.1, max_dist = 4):
         super().__init__()        
         # Message Passing
-        config = {
-            'hidden_dim': out_feats,
-            'activation': activation,
-            'dropout': dropout,
-            'batch_norm': batch_norm,
-            'residual_sum': residual_sum,
-        }
-        config['conv_layers']=min(config.get('conv_layers',3),3)
-        config['T']=config.get('T',2)
-
-
-        self.AttentiveFP = AttentiveFP(config)
-        self.i2i = nn.ModuleList([GCN_layer(out_feats, out_feats, activation, dropout, batch_norm, residual_sum) for _ in range(n_layers)])
+        self.r2r = nn.ModuleList([MPNN_layer(in_node_feats, in_edge_feats, out_feats, activation, dropout, batch_norm, residual_sum) for _ in range(n_layers)])
+        self.i2i = nn.ModuleList([GAT_layer(out_feats, out_feats, out_feats, activation, dropout, batch_norm, residual_sum) for _ in range(n_layers)])
 
         self.r2i = r2i_layer()
         self.i2d = i2s_layer()
@@ -162,9 +150,8 @@ class ISATconvolution(nn.Module):
         dot_graph.set_batch_num_nodes(graph.batch_num_nodes('d_nd'))
         dot_graph.set_batch_num_edges(graph.batch_num_edges('d2d'))
 
-
-        r_node, att_w = self.AttentiveFP(real_graph, r_node, r2r_edge)
-        for i in range(len(self.i2i)):
+        for i in range(len(self.r2r)):
+            r_node = self.r2r[i](real_graph, r_node, r2r_edge)
             i_node = self.i2i[i](image_graph, i_node)
         d_node1 = self.i2d(graph, i_node)
         d_node2 = self.d2d(dot_graph, d_node1, d2d_edge)

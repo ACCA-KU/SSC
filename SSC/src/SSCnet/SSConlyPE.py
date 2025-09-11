@@ -2,10 +2,10 @@ import torch
 import torch.nn as nn
 
 import dgl
-from dgl.nn import SumPooling
+from dgl.nn import SumPooling, AvgPooling
 from D4CMPP.networks.src.Linear import Linears
 from D4CMPP.networks.src.GAT import GATs, GAT_layer
-from D4CMPP.networks.src.GCN import GCNs, GCN_layer
+from D4CMPP.networks.src.MPNN import MPNN_layer
 from D4CMPP.networks.src.distGCN import distGCN_layer
 
 class network(nn.Module):
@@ -58,14 +58,16 @@ class network(nn.Module):
             nn.Linear(int(hidden_dim/4), 1),
         )
 
-        self.SElayer2_ = nn.Sequential(
-            nn.Linear(hidden_dim*2+solvent_dim, int(hidden_dim/2)),
-            nn.BatchNorm1d(int(hidden_dim/2)),
-            nn.Dropout(dropout),
-            nn.ReLU(),
-            nn.Linear(int(hidden_dim/2), 1),
-            nn.Sigmoid(),
-        )
+        # self.SElayer2_ = nn.Sequential(
+        #     nn.Linear(hidden_dim*2+solvent_dim, int(hidden_dim/2)),
+        #     nn.BatchNorm1d(int(hidden_dim/2)),
+        #     nn.Dropout(dropout),
+        #     nn.ReLU(),
+        #     nn.Linear(int(hidden_dim/2), 1),
+        #     nn.Sigmoid(),
+        # )
+
+
 
         
 
@@ -101,22 +103,20 @@ class network(nn.Module):
         solv_h_expanded = solv_h[expanded_indices]
 
         h = self.reduce(real_graph, r_node3)
-        h_expanded = torch.repeat_interleave(h, dot_graph.batch_num_nodes().int(), dim=0)
-
         refer_p = self.referLayer(h)
 
-        v1 = torch.cat([d_node1, solv_h_expanded], dim=-1)
-        se1 = self.SElayer1(v1)
+        # v1 = torch.cat([d_node1, solv_h_expanded], dim=-1)
+        # se1 = self.SElayer1(v1)
 
-        v2 = torch.cat([d_node2, h_expanded, solv_h_expanded], dim=-1)
-        se2 = self.SElayer2_(v2)*2
+        v2 = torch.cat([d_node2, solv_h_expanded], dim=-1)
+        se2 = self.SElayer1(v2)
         
-        se = se2*se1
+        se = se2
         sum_se = self.reduce(dot_graph, se)
 
 
         if kargs.get('get_score',False):
-            return {'RP':refer_p, 'SGC':se1, 'PE': se2}
+            return {'RP':refer_p, 'PEF': se2}
         p = refer_p + sum_se
         return p
         
@@ -128,8 +128,8 @@ class ISATconvolution(nn.Module):
     def __init__(self, in_node_feats, in_edge_feats, out_feats, activation, n_layers, dropout=0.2, batch_norm=False, residual_sum = False, alpha=0.1, max_dist = 4):
         super().__init__()        
         # Message Passing
-        self.r2r = nn.ModuleList([GCN_layer(in_node_feats, out_feats, activation, dropout, batch_norm, residual_sum) for _ in range(n_layers)])
-        self.i2i = nn.ModuleList([GCN_layer(out_feats, out_feats, activation, dropout, batch_norm, residual_sum) for _ in range(n_layers)])
+        self.r2r = nn.ModuleList([GAT_layer(in_node_feats, out_feats, out_feats, activation, dropout, batch_norm, residual_sum) for _ in range(n_layers)])
+        self.i2i = nn.ModuleList([GAT_layer(out_feats, out_feats, out_feats, activation, dropout, batch_norm, residual_sum) for _ in range(n_layers)])
 
         self.r2i = r2i_layer()
         self.i2d = i2s_layer()
