@@ -1,23 +1,23 @@
-# Solvatochromic Group Contribution (SGC) 
+# Solvatochromic Subgroup Contribution (SSC) 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-This repository provides a graph neural network for molecular property prediction, reflecting the idea of "Solvatochromic group contribution". In the approach of SGC, the solvent effects on the molecular property can be quantified by the contirbution of consisting functional groups. 
+This repository provides a graph neural network for molecular property prediction, reflecting the idea of "Solvatochromic subgroup contribution". In the approach of SSC, the solvent effects on the molecular property can be quantified by the contirbution of consisting functional groups. 
 
-This project is built upon our previous project [D4CMPP](https://github.com/spark8ku/DeepMPP), which is  the deep learning pipeline built with PyTorch and Deep Graph Library (DGL)
+This project is built upon our previous project [D4CMPP](https://github.com/spark8ku/DeepMPP), which is the deep learning pipeline built with PyTorch and Deep Graph Library (DGL)
 
 ## Installation
 ```bash
-pip install git+https://github.com/phillip1998/SGC.git
+pip install git+https://github.com/phillip1998/SSC.git
 ```
 or
 ```bash
-git clone https://github.com/phillip1998/SGC.git
-cd SGC
+git clone https://github.com/phillip1998/SSC.git
+cd SSC
 pip install -e
 ```
 ## Quick Start
 ```python
-from SGC import train
+from SSC import train
 train(data="CSV_file_name", target=["Column_name",])
 ```
 "example.ipynb" provides the example codes for training and prediction of sample dataset.
