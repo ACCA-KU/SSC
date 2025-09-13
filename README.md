@@ -3,15 +3,15 @@
 
 This repository provides a graph neural network for molecular property prediction, reflecting the idea of "Solvatochromic subgroup contribution". In the approach of SSC, the solvent effects on the molecular property can be quantified by the contirbution of consisting functional groups. 
 
-This project is built upon our previous project [D4CMPP](https://github.com/spark8ku/DeepMPP), which is the deep learning pipeline built with PyTorch and Deep Graph Library (DGL)
+This project is built upon our previous project [D4CMPP](https://github.com/ACCA-KU/DeepMPP), which is the deep learning pipeline built with PyTorch and Deep Graph Library (DGL)
 
 ## Installation
 ```bash
-pip install git+https://github.com/phillip1998/SSC.git
+pip install git+https://github.com/ACCA-KU/SSC.git
 ```
 or
 ```bash
-git clone https://github.com/phillip1998/SSC.git
+git clone https://github.com/ACCA-KU/SSC.git
 cd SSC
 pip install -e
 ```
@@ -24,4 +24,4 @@ train(data="CSV_file_name", target=["Column_name",])
 
 This single command automatically supports the all steps of trainning model, including preprocessing, trainning, and logging the result.
 
-Please refer the repository of [D4CMPP](https://github.com/spark8ku/DeepMPP) for more details.
+Please refer the repository of [D4CMPP](https://github.com/ACCA-KU/DeepMPP) for more details.

@@ -1,11 +1,11 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="SGC",
+    name="SSC",
     version="1.1.0",
     author="Jinyong Park",
     author_email="phillip1998@korea.ac.kr",
-    description="Graph neural network model for prediction of experimental molecular property reflecting Solvatochromic group contribution approach",
+    description="Graph neural network model for prediction of experimental molecular property reflecting Solvatochromic subgroup contribution approach",
     long_description=open("README.md", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
     url="https://github.com/phillip1998/SGC",
@@ -18,8 +18,8 @@ setup(
 "scipy>=1.10",
 "matplotlib>=3.7",
 "seaborn>=0.12",
-"torch>=2.2",
-"rdkit==2024.3.6",
+"torch>=2.2,<=2.4.0",
+"rdkit>=2022",
 "jupyter>=1.0",
 "ipykernel>=6.25",
 "notebook>=7.0",
@@ -27,7 +27,8 @@ setup(
 "joblib>=1.3",
 "pydantic>=2.10,<3.0",
 "dgl",
-"D4CMPP==1.25.1"
+"D4CMPP==1.26.2",
+"MoleculeSculptor"
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
