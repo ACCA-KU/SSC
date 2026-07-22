@@ -1,1 +1,0 @@
-from D4CMPP.src.DataManager.ISADataManager import *

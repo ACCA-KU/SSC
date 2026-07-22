@@ -9,7 +9,6 @@ SSCwoPE_GCN:
   train_manager_class: ISATrainer
   description: ""
   version: "1.0"
-
 SSCwoPE_AFP:
   name: "SSCwoPE_AFP"
   network: SSCwoPE_AFP
@@ -129,15 +128,3 @@ SSC_MPNN:
   train_manager_class: ISATrainer
   description: ""
   version: "1.0"
-
-SSC_multi:
-  name: "SSC_multi"
-  network: SSC_multi
-  data_manager_module: ISADataManager
-  data_manager_class: ISADataManager_v1p3
-  network_manager_module: ISANetworkManager
-  network_manager_class: ISANetworkManager
-  train_manager_module: ISATrainManager
-  train_manager_class: ISATrainer
-  description: ""
-  version: "1.3"

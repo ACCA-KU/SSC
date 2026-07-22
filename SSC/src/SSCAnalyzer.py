@@ -4,7 +4,7 @@ import torch
 import io
 import rdkit.Chem as Chem
 import matplotlib.pyplot as plt
-from D4CMPP import Analyzer
+from D4CMPP2 import Analyzer
 
 ISAAnalyzer = Analyzer.ISAAnalyzer_v1p3
 
@@ -215,10 +215,14 @@ class SSCAnalyzer(Analyzer.ISAwSAnalyzer):
         return frag
     
     def prepare_temp_data(self, smiles_list, solvents = None, graph_id = None):
+        if graph_id is not None:
+            raise ValueError(
+                "graph_id temporary DGL cache reuse is not supported by the D4CMPP2/PyG backend."
+            )
         if solvents is not None:
-            valid_smiles = self.dm.init_temp_data(smiles_list, solvents, graph_id = graph_id)
+            valid_smiles = self.dm.init_temp_data(smiles_list, solvents)
         else:
-             valid_smiles = self.dm.init_temp_data(smiles_list, graph_id = graph_id)
+             valid_smiles = self.dm.init_temp_data(smiles_list)
         temp_loader = self.dm.get_Dataloaders(temp=True)
         return temp_loader, valid_smiles
 

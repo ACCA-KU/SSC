@@ -1,11 +1,61 @@
-import D4CMPP
-# get the current directory
-import os
-import sys
-import inspect
+import D4CMPP2
+from D4CMPP2.networks.registry import get_model
 
+from .src.SSCnet.SSC import SSC
+from .src.SSCnet.SSC_AFP import SSCAFP
+from .src.SSCnet.SSC_DMPNN import SSCDMPNN
+from .src.SSCnet.SSC_GCN import SSCGCN
+from .src.SSCnet.SSC_MPNN import SSCMPNN
+from .src.SSCnet.SSConlyPE import SSConlyPE
+from .src.SSCnet.SSCwoPE_AFP import SSCwoPEAFP
+from .src.SSCnet.SSCwoPE_DMPNN import SSCwoPEDMPNN
+from .src.SSCnet.SSCwoPE_GCN import SSCwoPEGCN
+from .src.SSCnet.SSCwoPE_MPNN import SSCwoPEMPNN
 from .src.SSCAnalyzer import SSCAnalyzer as Analyzer
-import yaml
+
+
+_SSC_MODELS = (
+    SSC,
+    SSCGCN,
+    SSCMPNN,
+    SSCDMPNN,
+    SSCAFP,
+    SSCwoPEGCN,
+    SSCwoPEMPNN,
+    SSCwoPEDMPNN,
+    SSCwoPEAFP,
+    SSConlyPE,
+)
+_SSC_ALIASES = {"SSCwoPE_GCN": ("SSCwoPE-2",)}
+
+
+def _register_models():
+    """Register SSC as an external D4CMPP2 extension package."""
+
+    for model_class in _SSC_MODELS:
+        try:
+            existing = get_model(model_class.model_name)
+        except ValueError:
+            D4CMPP2.register_network(
+                model_class,
+                aliases=_SSC_ALIASES.get(model_class.model_name, ()),
+                data_contract="isa",
+            )
+            continue
+        if (
+            existing.network.__module__ != model_class.__module__
+            or existing.network.__qualname__ != model_class.__qualname__
+        ):
+            raise RuntimeError(
+                f"D4CMPP2 model name {model_class.model_name!r} is already "
+                f"registered by {existing.network.__module__}."
+            )
+
+
+_register_models()
+VALID_NETWORKS = tuple(model.model_name for model in _SSC_MODELS) + ("SSCwoPE-2",)
+
+
 def train(**kwargs):
     """
     Train the network for SSC with the given configuration.
@@ -72,8 +122,6 @@ def train(**kwargs):
             
         DATA_PATH   : str. Default= None
                       the path of directory that contains the data file. If None, it will walk the subpath.
-        NET_REFER   : str. Default= "{src}/network_refer.yaml"
-                      the path to the network reference file. 
         MODEL_DIR   : str. Default= "./_Models"
                       the path to the directory to save the models.
         GRAPH_DIR  : str. Default= "./_Graphs"
@@ -95,17 +143,15 @@ def train(**kwargs):
 
     
     """
-    # Check if the required arguments are provided
-    valid_networks = yaml.safe_load(open(os.path.join(os.path.dirname(__file__), "src/network_refer.yaml"), 'r')).keys()
-    if kwargs.get('network','SSC') not in valid_networks:
-        raise ValueError(f"network must be one of {valid_networks}")
-    if kwargs.get('network',None) is None:
-        kwargs['network'] = 'SSC'
-    pwd  = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-    kwargs['NET_REFER'] = os.path.join(pwd, "src/network_refer.yaml")
-    kwargs['NET_DIR'] = os.path.join(pwd, "src/SSCnet")
-    kwargs['DataManager_PATH'] = os.path.join(pwd, "src/SSCDataManager")
-    kwargs['explicit_h_columns'] = ['solvent']
-    kwargs['sculptor_index'] = (6,2,0)
+    network = kwargs.get("network") or "SSC"
+    if network not in VALID_NETWORKS:
+        raise ValueError(f"network must be one of {VALID_NETWORKS}")
+    kwargs["network"] = network
+    kwargs.setdefault('explicit_h_columns', ['solvent'])
+    kwargs.setdefault('molecule_columns', ['compound', 'solvent'])
+    kwargs.setdefault('sculptor_index', (6, 2, 0))
 
-    return D4CMPP.train(**kwargs)
+    return D4CMPP2.train(**kwargs)
+
+
+__all__ = ["Analyzer", "VALID_NETWORKS", "train"]
