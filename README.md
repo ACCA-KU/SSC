@@ -8,13 +8,6 @@ PyTorch Geometric (PyG). The public `SSC.train` and `SSC.Analyzer` entry points
 remain available, while graph generation, batching, training, and saved-model
 loading use the D4CMPP2 contracts.
 
-SSC remains a separate extension package; it does not copy its models into or
-modify the D4CMPP2 source tree. Importing `SSC` registers its model classes
-through D4CMPP2's public registry API. Every SSC model inherits
-`MolecularNetwork` and therefore uses D4CMPP2's config validation, canonical
-batch validation, NaN-masked loss, optimization metadata, managers, and
-registered-model source snapshot format.
-
 <p align="center">
   <img src="images/main_figure.png" alt="SSC model architecture" width="700">
 </p>
