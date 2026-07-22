@@ -15,6 +15,10 @@ through D4CMPP2's public registry API. Every SSC model inherits
 batch validation, NaN-masked loss, optimization metadata, managers, and
 registered-model source snapshot format.
 
+<p align="center">
+  <img src="images/main_figure.png" alt="SSC model architecture" width="700">
+</p>
+
 ## Installation
 ```bash
 pip install git+https://github.com/ACCA-KU/SSC.git
@@ -28,6 +32,7 @@ pip install -e
 
 Python 3.10 or newer is required. Install D4CMPP2 and its PyG/RDKit runtime in
 the same environment. DGL is no longer required.
+
 
 ## Quick Start
 ```python
